@@ -10,6 +10,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -49,7 +51,10 @@ public class RedisConfig extends CachingConfigurerSupport {
 
     @Bean
     StringRedisTemplate template(RedisConnectionFactory connectionFactory) {
-        return new StringRedisTemplate(connectionFactory);
+        StringRedisTemplate redisTemplate=new StringRedisTemplate(connectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return redisTemplate;
     }
 
     public class Receiver {
